@@ -12,184 +12,197 @@ export default function SignupPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
     if (!name || !email || !password) {
       alert("All fields are required.");
       return;
     }
     alert("Account created successfully!");
-    router.push("/auth/login"); // Added leading slash for correct routing
+    router.push("/auth/login");
   };
 
   return (
-    <div className="ph-signup-wrapper">
+    <div className="signup-page-wrapper">
       <style>{`
-        .ph-signup-wrapper {
+        /* 1. Global Wrapper - Centering the Content */
+        .signup-page-wrapper {
           min-height: 100vh;
+          width: 100%;
           display: flex;
           align-items: center;
           justify-content: center;
-          background-color: #0a0e14;
+          background: #0a0e14;
           background-image: 
-            radial-gradient(circle at top right, #064e3b44 0%, transparent 40%),
-            radial-gradient(circle at bottom left, #1e3a8a44 0%, transparent 40%);
-          font-family: 'Poppins', sans-serif;
-          padding: 20px;
+            radial-gradient(at 0% 0%, rgba(34, 197, 94, 0.15) 0, transparent 50%), 
+            radial-gradient(at 100% 100%, rgba(59, 130, 246, 0.15) 0, transparent 50%);
+          padding: 20px; /* Essential for mobile breathing room */
+          box-sizing: border-box;
+          font-family: 'Inter', system-ui, -apple-system, sans-serif;
         }
 
-        .ph-signup-card {
-          background: rgba(255, 255, 255, 0.02);
-          backdrop-filter: blur(12px);
-          border: 1px solid rgba(255, 255, 255, 0.08);
-          padding: 40px;
-          border-radius: 28px;
+        /* 2. The Signup Card */
+        .signup-card {
           width: 100%;
-          max-width: 480px;
-          box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.6);
+          max-width: 450px;
+          background: rgba(255, 255, 255, 0.03);
+          backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: 24px;
+          padding: 40px 30px;
+          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+          color: white;
         }
 
-        .ph-signup-card h1 {
-          color: #ffffff;
-          font-size: 2.2rem;
+        .signup-card h1 {
+          margin: 0 0 10px 0;
+          font-size: 2rem;
           font-weight: 800;
           text-align: center;
-          margin-bottom: 8px;
-          background: linear-gradient(to right, #4ade80, #60a5fa);
+          background: linear-gradient(to right, #22c55e, #60a5fa);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
         }
 
-        .ph-signup-subtitle {
+        .signup-card p.subtitle {
           text-align: center;
           color: #94a3b8;
           margin-bottom: 30px;
           font-size: 0.95rem;
         }
 
-        .ph-form-group {
-          margin-bottom: 18px;
+        /* 3. Form Styling */
+        form {
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
         }
 
-        .ph-form-group label {
-          display: block;
-          color: #94a3b8;
+        .input-group {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+
+        .input-group label {
           font-size: 0.85rem;
-          font-weight: 500;
-          margin-bottom: 6px;
-          padding-left: 4px;
+          font-weight: 600;
+          color: #cbd5e1;
+          margin-left: 4px;
         }
 
-        .ph-input {
+        .input-group input {
           width: 100%;
-          padding: 14px 18px;
-          background: rgba(13, 17, 23, 0.8);
-          border: 1px solid #30363d;
-          border-radius: 14px;
-          color: #ffffff;
+          padding: 14px 16px;
+          background: rgba(0, 0, 0, 0.2);
+          border: 1px solid #334155;
+          border-radius: 12px;
+          color: white;
           font-size: 1rem;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          transition: all 0.3s ease;
           outline: none;
+          box-sizing: border-box;
         }
 
-        .ph-input:focus {
-          border-color: #4ade80;
-          background: #0d1117;
-          box-shadow: 0 0 0 4px rgba(74, 222, 128, 0.1);
+        .input-group input:focus {
+          border-color: #22c55e;
+          background: rgba(34, 197, 94, 0.05);
+          box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.1);
         }
 
-        .ph-signup-btn {
-          width: 100%;
+        /* 4. Button & Links */
+        .signup-btn {
+          margin-top: 10px;
           padding: 16px;
-          background: #22c55e;
-          color: #000000;
+          border-radius: 12px;
           border: none;
-          border-radius: 14px;
+          background: #22c55e;
+          color: #052e16;
           font-size: 1.1rem;
-          font-weight: 800;
+          font-weight: 700;
           cursor: pointer;
           transition: all 0.3s ease;
-          margin-top: 15px;
-          box-shadow: 0 8px 15px rgba(34, 197, 94, 0.2);
         }
 
-        .ph-signup-btn:hover {
+        .signup-btn:hover {
           background: #4ade80;
           transform: translateY(-2px);
-          box-shadow: 0 12px 24px rgba(34, 197, 94, 0.4);
+          box-shadow: 0 10px 15px -3px rgba(34, 197, 94, 0.3);
         }
 
-        .ph-footer {
-          text-align: center;
+        .login-prompt {
           margin-top: 25px;
-          color: #64748b;
+          text-align: center;
           font-size: 0.9rem;
+          color: #94a3b8;
         }
 
-        .ph-link {
-          color: #4ade80;
+        .login-prompt a {
+          color: #22c55e;
           text-decoration: none;
           font-weight: 700;
-          margin-left: 5px;
         }
 
-        .ph-link:hover {
-          color: #60a5fa;
+        .login-prompt a:hover {
           text-decoration: underline;
         }
 
+        /* 5. Responsive Adjustments */
         @media (max-width: 480px) {
-          .ph-signup-card {
+          .signup-card {
             padding: 30px 20px;
+            border-radius: 20px;
+          }
+          .signup-card h1 {
+            font-size: 1.75rem;
           }
         }
       `}</style>
 
-      <div className="ph-signup-card">
+      <div className="signup-card">
         <h1>Create Account</h1>
-        <p className="ph-signup-subtitle">Join the Pips Hunter Trading Academy</p>
+        <p className="subtitle">Join Pips Hunter Academy today</p>
 
         <form onSubmit={handleSubmit}>
-          <div className="ph-form-group">
+          <div className="input-group">
             <label>Full Name</label>
             <input
-              className="ph-input"
               type="text"
-              placeholder="Antony Mwangi"
+              placeholder="e.g. Antony Mwangi"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              required
             />
           </div>
 
-          <div className="ph-form-group">
+          <div className="input-group">
             <label>Email Address</label>
             <input
-              className="ph-input"
               type="email"
               placeholder="name@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              required
             />
           </div>
 
-          <div className="ph-form-group">
+          <div className="input-group">
             <label>Password</label>
             <input
-              className="ph-input"
               type="password"
-              placeholder="Create a strong password"
+              placeholder="Min. 8 characters"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              required
             />
           </div>
 
-          <button className="ph-signup-btn" type="submit">
+          <button type="submit" className="signup-btn">
             Sign Up
           </button>
         </form>
 
-        <p className="ph-footer">
-          Already have an account? 
-          <Link href="/auth/login" className="ph-link">Login</Link>
+        <p className="login-prompt">
+          Already have an account? <Link href="/auth/login">Login</Link>
         </p>
       </div>
     </div>

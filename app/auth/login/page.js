@@ -11,13 +11,10 @@ export default function LoginPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // Simulate login logic
     if (!email || !password) {
       alert("Please fill all the fields.");
       return;
     }
-
     alert("Login successful!");
     router.push("/learn");
   };
@@ -25,134 +22,155 @@ export default function LoginPage() {
   return (
     <div className="ph-auth-container">
       <style>{`
+        /* 1. Global Container - Fluid Background */
         .ph-auth-container {
           min-height: 100vh;
+          width: 100%;
           display: flex;
           align-items: center;
           justify-content: center;
           background-color: #0a0e14;
           background-image: 
-            radial-gradient(circle at 20% 30%, #1e3a8a33 0%, transparent 40%),
-            radial-gradient(circle at 80% 70%, #064e3b33 0%, transparent 40%);
-          font-family: 'Poppins', sans-serif;
+            radial-gradient(circle at 10% 20%, rgba(30, 58, 138, 0.2) 0%, transparent 40%),
+            radial-gradient(circle at 90% 80%, rgba(34, 197, 94, 0.15) 0%, transparent 40%);
+          font-family: 'Inter', 'Poppins', sans-serif;
           padding: 20px;
+          box-sizing: border-box;
         }
 
+        /* 2. Login Card - Responsive Widths */
         .ph-login-card {
           background: rgba(255, 255, 255, 0.03);
-          backdrop-filter: blur(15px);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
           border: 1px solid rgba(255, 255, 255, 0.1);
-          padding: 50px 40px;
-          border-radius: 24px;
+          padding: clamp(30px, 8vw, 50px) clamp(20px, 5vw, 40px);
+          border-radius: 28px;
           width: 100%;
-          max-width: 450px;
-          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+          max-width: 440px; /* Limits size on desktop */
+          box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.7);
+          animation: phFadeIn 0.8s ease-out;
         }
 
+        @keyframes phFadeIn {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 3. Fluid Typography */
         .ph-login-card h1 {
           color: #ffffff;
-          font-size: 2.2rem;
+          font-size: clamp(1.8rem, 5vw, 2.4rem);
           font-weight: 800;
           text-align: center;
-          margin-bottom: 10px;
-          letter-spacing: -1px;
+          margin: 0 0 10px 0;
+          letter-spacing: -0.02em;
         }
 
         .ph-subtitle {
           text-align: center;
           color: #94a3b8;
-          margin-bottom: 35px;
-          font-size: 0.95rem;
+          margin-bottom: clamp(25px, 6vw, 40px);
+          font-size: clamp(0.9rem, 2vw, 1rem);
+          font-weight: 400;
         }
 
+        /* 4. Form Layout */
         .ph-form-group {
-          margin-bottom: 20px;
+          margin-bottom: 24px;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
         }
 
         .ph-form-group label {
-          display: block;
           color: #cbd5e1;
-          font-size: 0.9rem;
+          font-size: 0.85rem;
           font-weight: 600;
-          margin-bottom: 8px;
+          padding-left: 4px;
         }
 
         .ph-input {
           width: 100%;
-          padding: 14px 16px;
-          background: #0d1117;
-          border: 1px solid #30363d;
-          border-radius: 12px;
+          padding: 16px;
+          background: rgba(13, 17, 23, 0.8);
+          border: 1px solid #334155;
+          border-radius: 14px;
           color: #ffffff;
           font-size: 1rem;
-          transition: all 0.3s ease;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           outline: none;
+          box-sizing: border-box;
         }
 
         .ph-input:focus {
           border-color: #22c55e;
-          box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.1);
-          background: #111827;
+          background: #0d1117;
+          box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.15);
         }
 
-        .ph-input::placeholder {
-          color: #4b5563;
-        }
-
+        /* 5. The "Profit" Button */
         .ph-submit-btn {
           width: 100%;
-          padding: 16px;
+          padding: 18px;
           background: #22c55e;
-          color: #000000;
+          color: #052e16;
           border: none;
-          border-radius: 12px;
-          font-size: 1.1rem;
+          border-radius: 14px;
+          font-size: 1rem;
           font-weight: 800;
           cursor: pointer;
           transition: all 0.3s ease;
           margin-top: 10px;
           text-transform: uppercase;
-          letter-spacing: 1px;
+          letter-spacing: 0.05em;
         }
 
         .ph-submit-btn:hover {
           background: #4ade80;
           transform: translateY(-2px);
-          box-shadow: 0 10px 20px rgba(34, 197, 94, 0.3);
+          box-shadow: 0 15px 30px rgba(34, 197, 94, 0.3);
         }
 
         .ph-submit-btn:active {
-          transform: translateY(0);
+          transform: translateY(1px);
         }
 
         .ph-footer-text {
           text-align: center;
-          margin-top: 25px;
-          color: #94a3b8;
-          font-size: 0.9rem;
+          margin-top: 30px;
+          color: #64748b;
+          font-size: 0.95rem;
         }
 
         .ph-signup-link {
           color: #22c55e;
           text-decoration: none;
           font-weight: 700;
-          margin-left: 5px;
+          margin-left: 6px;
+          transition: color 0.2s;
         }
 
         .ph-signup-link:hover {
+          color: #4ade80;
           text-decoration: underline;
         }
 
-        @media (max-width: 480px) {
+        /* 6. Breakpoints for fine-tuning */
+        @media (max-width: 400px) {
           .ph-login-card {
-            padding: 40px 25px;
+            padding: 30px 20px;
+            border-radius: 20px;
+          }
+          .ph-input {
+            padding: 14px;
           }
         }
       `}</style>
 
       <div className="ph-login-card">
         <h1>Welcome Back</h1>
-        <p className="ph-subtitle">Log in to your Pips Hunter account</p>
+        <p className="ph-subtitle">Continue your journey with Pips Hunter</p>
 
         <form onSubmit={handleSubmit}>
           <div className="ph-form-group">
@@ -160,7 +178,7 @@ export default function LoginPage() {
             <input
               className="ph-input"
               type="email"
-              placeholder="name@example.com"
+              placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -185,7 +203,7 @@ export default function LoginPage() {
         </form>
 
         <p className="ph-footer-text">
-          Don't have an account? 
+          New to the academy? 
           <Link href="/auth/signup" className="ph-signup-link">Sign Up</Link>
         </p>
       </div>
