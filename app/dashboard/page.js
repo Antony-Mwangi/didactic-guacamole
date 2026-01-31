@@ -1,108 +1,149 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 
 export default function DashboardPage() {
-  const progress = {
-    psychology: true,
+  const totalLessons = 3;
+
+  const [progress, setProgress] = useState({
+    psychology: false,
     riskManagement: false,
     marketAnalysis: false,
-  };
+  });
+
+  const [notes, setNotes] = useState("");
+  const [streak, setStreak] = useState(1);
+  const [username, setUsername] = useState("Trader");
+  const [quizScore, setQuizScore] = useState(0);
+
+  // Load saved data
+  useEffect(() => {
+    const savedProgress = localStorage.getItem("progress");
+    const savedNotes = localStorage.getItem("notes");
+    const savedStreak = localStorage.getItem("streak");
+    const savedUsername = localStorage.getItem("username");
+    const savedQuiz = localStorage.getItem("quizScore");
+
+    if (savedProgress) setProgress(JSON.parse(savedProgress));
+    if (savedNotes) setNotes(savedNotes);
+    if (savedStreak) setStreak(Number(savedStreak));
+    if (savedUsername) setUsername(savedUsername);
+    if (savedQuiz) setQuizScore(Number(savedQuiz));
+  }, []);
+
+  // Save progress
+  useEffect(() => {
+    localStorage.setItem("progress", JSON.stringify(progress));
+  }, [progress]);
 
   const completedLessons = Object.values(progress).filter(Boolean).length;
-  const totalLessons = 3;
   const percentage = Math.round((completedLessons / totalLessons) * 100);
 
+  const markComplete = (lesson) => {
+    setProgress((prev) => ({ ...prev, [lesson]: true }));
+  };
+
+  const saveNotes = () => {
+    localStorage.setItem("notes", notes);
+    alert("Notes saved to your terminal!");
+  };
+
+  const saveProfile = () => {
+    localStorage.setItem("username", username);
+    alert("Profile updated!");
+  };
+
+  const increaseStreak = () => {
+    const newStreak = streak + 1;
+    setStreak(newStreak);
+    localStorage.setItem("streak", newStreak);
+  };
+
+  const badges = [];
+  if (completedLessons >= 1) badges.push("Beginner Badge 🥉");
+  if (completedLessons >= 2) badges.push("Intermediate Badge 🥈");
+  if (completedLessons === 3) badges.push("Master Trader Badge 🥇");
+
   return (
-    <div className="ph-dash-container">
+    <div className="ph-dashboard">
       <style>{`
-        .ph-dash-container {
+        .ph-dashboard {
           background-color: #0a0e14;
-          min-height: 100vh;
           color: #e2e8f0;
-          font-family: 'Inter', sans-serif;
-          padding: clamp(20px, 5vw, 60px) 5%;
+          min-height: 100vh;
+          font-family: 'Poppins', sans-serif;
+          padding: clamp(20px, 5vw, 50px);
         }
 
-        .ph-dash-header {
-          max-width: 1100px;
-          margin: 0 auto 40px;
+        .ph-container {
+          max-width: 1200px;
+          margin: 0 auto;
         }
 
-        .ph-dash-header h1 {
-          font-size: 2.2rem;
-          font-weight: 800;
-          margin: 0;
-          color: #ffffff;
+        .ph-header {
+          margin-bottom: 40px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 20px;
         }
 
-        .ph-dash-header p {
-          color: #94a3b8;
-          font-size: 1.1rem;
+        .ph-header h1 { font-size: 2.5rem; margin: 0; color: #fff; }
+        .ph-streak-chip {
+          background: rgba(255, 107, 0, 0.1);
+          color: #ff6b00;
+          padding: 8px 20px;
+          border-radius: 50px;
+          border: 1px solid #ff6b0044;
+          font-weight: 700;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          cursor: pointer;
         }
 
-        /* PROGRESS BOX */
-        .ph-stats-grid {
+        /* GRID LAYOUT */
+        .ph-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-          gap: 25px;
-          max-width: 1100px;
-          margin: 0 auto 40px;
-        }
-
-        .ph-stat-card {
-          background: linear-gradient(135deg, #111827 0%, #0f172a 100%);
-          border: 1px solid #1f2937;
-          border-radius: 20px;
-          padding: 30px;
-          display: flex;
-          align-items: center;
+          grid-template-columns: repeat(12, 1fr);
           gap: 25px;
         }
 
-        .ph-progress-circle {
-          width: 80px;
-          height: 80px;
-          border-radius: 50%;
-          background: conic-gradient(#22c55e ${percentage}%, #1f2937 0);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          position: relative;
-        }
-
-        .ph-progress-circle::after {
-          content: "${percentage}%";
-          position: absolute;
-          width: 65px;
-          height: 65px;
-          background: #0f172a;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-weight: 800;
-          color: #22c55e;
-          font-size: 1.1rem;
-        }
-
-        /* LESSON LIST */
-        .ph-overview-card {
+        .ph-card {
           background: #111827;
           border: 1px solid #1f2937;
           border-radius: 20px;
-          padding: 30px;
-          max-width: 1100px;
-          margin: 0 auto 40px;
+          padding: 25px;
+          transition: transform 0.3s ease;
         }
 
-        .ph-overview-card h2 {
-          font-size: 1.4rem;
-          margin-bottom: 25px;
-          color: #ffffff;
+        .ph-card h2 { font-size: 1.2rem; color: #94a3b8; margin-top: 0; margin-bottom: 20px; }
+
+        /* SECTIONS SIZING */
+        .ph-col-8 { grid-column: span 8; }
+        .ph-col-4 { grid-column: span 4; }
+        .ph-col-12 { grid-column: span 12; }
+
+        /* PROGRESS BAR */
+        .ph-progress-bg {
+          width: 100%;
+          background: #1f2937;
+          height: 12px;
+          border-radius: 10px;
+          overflow: hidden;
+          margin: 15px 0;
+        }
+        .ph-progress-fill {
+          height: 100%;
+          background: linear-gradient(90deg, #22c55e, #4ade80);
+          transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .ph-lesson-item {
+        /* LISTS & BUTTONS */
+        .ph-list { list-style: none; padding: 0; margin: 0; }
+        .ph-list-item {
           display: flex;
           justify-content: space-between;
           align-items: center;
@@ -110,129 +151,185 @@ export default function DashboardPage() {
           border-bottom: 1px solid #1f2937;
         }
 
-        .ph-lesson-item:last-child { border: none; }
-
-        .ph-status-badge {
-          padding: 6px 14px;
-          border-radius: 50px;
-          font-size: 0.8rem;
-          font-weight: 700;
-          text-transform: uppercase;
-        }
-
-        .ph-status-completed { background: rgba(34, 197, 94, 0.1); color: #22c55e; }
-        .ph-status-pending { background: rgba(148, 163, 184, 0.1); color: #94a3b8; }
-
-        /* CONTINUE LEARNING LINKS */
-        .ph-link-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-          gap: 15px;
-          max-width: 1100px;
-          margin: 0 auto;
-        }
-
-        .ph-learn-btn {
-          background: #1e293b;
-          color: #ffffff;
-          text-decoration: none;
-          padding: 20px;
-          border-radius: 16px;
-          text-align: center;
-          font-weight: 600;
-          transition: 0.3s;
-          border: 1px solid #334155;
-        }
-
-        .ph-learn-btn:hover {
+        .ph-btn {
           background: #22c55e;
-          color: #000;
-          border-color: #22c55e;
-          transform: translateY(-3px);
+          color: #052e16;
+          border: none;
+          padding: 10px 18px;
+          border-radius: 10px;
+          font-weight: 700;
+          cursor: pointer;
+          font-size: 0.85rem;
+          transition: 0.2s;
+        }
+        .ph-btn:hover { background: #4ade80; transform: translateY(-2px); }
+        .ph-btn-secondary { background: #334155; color: #fff; }
+
+        .ph-input, .ph-textarea {
+          width: 100%;
+          background: #0d1117;
+          border: 1px solid #334155;
+          border-radius: 12px;
+          color: #fff;
+          padding: 12px;
+          box-sizing: border-box;
+          font-family: inherit;
         }
 
-        .ph-motivation-footer {
-          max-width: 1100px;
-          margin: 60px auto 0;
+        .ph-badge-flex { display: flex; gap: 10px; flex-wrap: wrap; }
+        .ph-badge {
+          background: #1e293b;
+          padding: 8px 15px;
+          border-radius: 12px;
+          border: 1px solid #334155;
+          font-size: 0.9rem;
+        }
+
+        .ph-nav-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+          gap: 15px;
+          margin-top: 20px;
+        }
+        .ph-nav-card {
+          background: #0d1117;
+          padding: 15px;
+          border-radius: 12px;
+          text-decoration: none;
+          color: #22c55e;
           text-align: center;
-          padding: 40px;
-          background: rgba(34, 197, 94, 0.05);
-          border-radius: 24px;
-          border: 1px dashed rgba(34, 197, 94, 0.3);
+          border: 1px solid #22c55e44;
+          font-weight: 600;
         }
+        .ph-nav-card:hover { background: rgba(34, 197, 94, 0.1); }
 
-        @media (max-width: 640px) {
-          .ph-stat-card { flex-direction: column; text-align: center; }
-          .ph-lesson-item { flex-direction: column; gap: 10px; align-items: flex-start; }
-          .ph-status-badge { align-self: flex-start; }
+        /* RESPONSIVE */
+        @media (max-width: 900px) {
+          .ph-col-8, .ph-col-4 { grid-column: span 12; }
         }
       `}</style>
 
-      <header className="ph-dash-header">
-        <h1>Student Dashboard</h1>
-        <p>Welcome back, Trader. Ready for the next trade?</p>
-      </header>
-
-      <div className="ph-stats-grid">
-        <section className="ph-stat-card">
-          <div className="ph-progress-circle"></div>
+      <div className="ph-container">
+        <header className="ph-header">
           <div>
-            <h2>Your Progress</h2>
-            <p style={{ color: "#94a3b8", margin: 0 }}>
-              {completedLessons} of {totalLessons} lessons mastered
-            </p>
+            <h1>Dashboard</h1>
+            <p>Welcome back, <strong>{username}</strong> 👋</p>
           </div>
-        </section>
-
-        <section className="ph-stat-card" style={{ borderLeft: "4px solid #22c55e" }}>
-          <div>
-            <h2 style={{ fontSize: "1rem", color: "#22c55e", marginBottom: "5px" }}>NEXT MILESTONE</h2>
-            <p style={{ fontSize: "1.4rem", fontWeight: "800", margin: 0 }}>
-              {progress.psychology ? "Risk Management" : "Trading Psychology"}
-            </p>
+          <div className="ph-streak-chip" onClick={increaseStreak}>
+            🔥 {streak} Day Streak
           </div>
-        </section>
-      </div>
+        </header>
 
-      <section className="ph-overview-card">
-        <h2>Curriculum Overview</h2>
-        <div className="ph-lesson-item">
-          <span>1. Trading Psychology</span>
-          <span className={`ph-status-badge ${progress.psychology ? 'ph-status-completed' : 'ph-status-pending'}`}>
-            {progress.psychology ? "Completed" : "In Progress"}
-          </span>
-        </div>
-        <div className="ph-lesson-item">
-          <span>2. Risk Management</span>
-          <span className={`ph-status-badge ${progress.riskManagement ? 'ph-status-completed' : 'ph-status-pending'}`}>
-            {progress.riskManagement ? "Completed" : "In Progress"}
-          </span>
-        </div>
-        <div className="ph-lesson-item">
-          <span>3. Market Analysis</span>
-          <span className={`ph-status-badge ${progress.marketAnalysis ? 'ph-status-completed' : 'ph-status-pending'}`}>
-            {progress.marketAnalysis ? "Completed" : "In Progress"}
-          </span>
-        </div>
-      </section>
+        <div className="ph-grid">
+          {/* Progress Card */}
+          <section className="ph-card ph-col-8">
+            <h2>COURSE PROGRESS</h2>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <span>{completedLessons} / {totalLessons} Lessons</span>
+              <span style={{ color: "#22c55e", fontWeight: "800" }}>{percentage}%</span>
+            </div>
+            <div className="ph-progress-bg">
+              <div className="ph-progress-fill" style={{ width: `${percentage}%` }}></div>
+            </div>
+            <p style={{ fontSize: "0.85rem", color: "#64748b" }}>Complete your lessons to unlock Master Trader status.</p>
+          </section>
 
-      <div className="ph-dash-header" style={{ marginBottom: "20px" }}>
-        <h2>Continue Learning</h2>
-      </div>
-      
-      <div className="ph-link-grid">
-        <Link href="/learn/psychology" className="ph-learn-btn">Mindset Mastery</Link>
-        <Link href="/learn/risk-management" className="ph-learn-btn">Capital Protection</Link>
-        <Link href="/learn/market-analysis" className="ph-learn-btn">Chart Analysis</Link>
-      </div>
+          {/* Achievement Card */}
+          <section className="ph-card ph-col-4">
+            <h2>ACHIEVEMENTS</h2>
+            <div className="ph-badge-flex">
+              {badges.length > 0 ? (
+                badges.map((badge, i) => <div key={i} className="ph-badge">{badge}</div>)
+              ) : (
+                <p style={{ color: "#64748b", margin: 0 }}>Start learning to earn badges!</p>
+              )}
+            </div>
+          </section>
 
-      <section className="ph-motivation-footer">
-        <h2 style={{ color: "#22c55e" }}>Keep Going</h2>
-        <p style={{ maxWidth: "600px", margin: "10px auto", color: "#94a3b8" }}>
-          Consistency is key in trading. Complete all lessons and apply what
-          you learn in demo trading before going live.
-        </p>
-      </section>
+          {/* Lessons Card */}
+          <section className="ph-card ph-col-8">
+            <h2>MODULES</h2>
+            <ul className="ph-list">
+              <li className="ph-list-item">
+                <span>Trading Psychology</span>
+                {progress.psychology ? 
+                  <span style={{ color: "#22c55e" }}>✅ Done</span> : 
+                  <button className="ph-btn" onClick={() => markComplete("psychology")}>Complete</button>
+                }
+              </li>
+              <li className="ph-list-item">
+                <span>Risk Management</span>
+                {progress.riskManagement ? 
+                  <span style={{ color: "#22c55e" }}>✅ Done</span> : 
+                  <button className="ph-btn" onClick={() => markComplete("riskManagement")}>Complete</button>
+                }
+              </li>
+              <li className="ph-list-item">
+                <span>Market Analysis</span>
+                {progress.marketAnalysis ? 
+                  <span style={{ color: "#22c55e" }}>✅ Done</span> : 
+                  <button className="ph-btn" onClick={() => markComplete("marketAnalysis")}>Complete</button>
+                }
+              </li>
+            </ul>
+          </section>
+
+          {/* Quiz Card */}
+          <section className="ph-card ph-col-4">
+            <h2>QUIZ SCORE</h2>
+            <div style={{ textAlign: "center", padding: "10px 0" }}>
+              <div style={{ fontSize: "2.5rem", fontWeight: "800", color: quizScore > 70 ? "#22c55e" : "#facc15" }}>
+                {quizScore}%
+              </div>
+              <button 
+                className="ph-btn ph-btn-secondary" 
+                style={{ marginTop: "15px", width: "100%" }}
+                onClick={() => setQuizScore(Math.floor(Math.random() * 100))}
+              >
+                Retake Exam
+              </button>
+            </div>
+          </section>
+
+          {/* Notes Card */}
+          <section className="ph-card ph-col-8">
+            <h2>TRADING JOURNAL / NOTES</h2>
+            <textarea
+              className="ph-textarea"
+              rows="6"
+              placeholder="Jot down your trading insights..."
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+            ></textarea>
+            <button className="ph-btn" style={{ marginTop: "15px" }} onClick={saveNotes}>Save Journal</button>
+          </section>
+
+          {/* Settings Card */}
+          <section className="ph-card ph-col-4">
+            <h2>PROFILE</h2>
+            <div className="ph-form-group">
+              <label>Username</label>
+              <input
+                className="ph-input"
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+            </div>
+            <button className="ph-btn ph-btn-secondary" style={{ width: "100%" }} onClick={saveProfile}>Update Profile</button>
+          </section>
+
+          {/* Navigation Card */}
+          <section className="ph-card ph-col-12">
+            <h2>CONTINUE LEARNING</h2>
+            <div className="ph-nav-grid">
+              <Link href="/learn/psychology" className="ph-nav-card">Psychology Module →</Link>
+              <Link href="/learn/risk-management" className="ph-nav-card">Risk Management →</Link>
+              <Link href="/learn/market-analysis" className="ph-nav-card">Market Analysis →</Link>
+            </div>
+          </section>
+        </div>
+      </div>
     </div>
   );
 }
