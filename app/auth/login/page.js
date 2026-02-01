@@ -8,42 +8,54 @@ export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [message, setMessage] = useState(""); // For success/error messages
+  const [messageType, setMessageType] = useState("success"); // "success" or "error"
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  if (!email || !password) {
-    alert("Please fill all the fields.");
-    return;
-  }
-
-  try {
-    const res = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      alert(data.message || "Login failed");
+    if (!email || !password) {
+      setMessageType("error");
+      setMessage("Please fill all the fields.");
       return;
     }
 
-    // Save token + user
-    localStorage.setItem("ph_token", data.token);
-    localStorage.setItem("ph_user", JSON.stringify(data.user));
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-    alert("Login successful!");
-    router.push("/dashboard");
+      const data = await res.json();
 
-  } catch (error) {
-    alert("Something went wrong. Try again.");
-  }
-};
+      if (!res.ok) {
+        setMessageType("error");
+        setMessage(data.message || "Login failed");
+        return;
+      }
+
+      // Save token + user
+      localStorage.setItem("ph_token", data.token);
+      localStorage.setItem("ph_user", JSON.stringify(data.user));
+
+      // Show success message
+      setMessageType("success");
+      setMessage("Welcome back! Redirecting to your dashboard...");
+
+      // Redirect after short delay
+      setTimeout(() => {
+        router.push("/dashboard");
+      }, 1200);
+
+    } catch (error) {
+      setMessageType("error");
+      setMessage("Something went wrong. Please try again.");
+      console.error(error);
+    }
+  };
 
   return (
     <div className="ph-auth-container">
@@ -73,7 +85,7 @@ export default function LoginPage() {
           padding: clamp(30px, 8vw, 50px) clamp(20px, 5vw, 40px);
           border-radius: 28px;
           width: 100%;
-          max-width: 440px; /* Limits size on desktop */
+          max-width: 440px;
           box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.7);
           animation: phFadeIn 0.8s ease-out;
         }
@@ -182,7 +194,22 @@ export default function LoginPage() {
           text-decoration: underline;
         }
 
-        /* 6. Breakpoints for fine-tuning */
+        /* 6. Message styling */
+        .ph-message {
+          text-align: center;
+          margin-top: 16px;
+          font-weight: 600;
+        }
+
+        .ph-message.success {
+          color: #22c55e;
+        }
+
+        .ph-message.error {
+          color: #f87171;
+        }
+
+        /* 7. Breakpoints for fine-tuning */
         @media (max-width: 400px) {
           .ph-login-card {
             padding: 30px 20px;
@@ -226,6 +253,13 @@ export default function LoginPage() {
           <button className="ph-submit-btn" type="submit">
             Login
           </button>
+
+          {/* Display success or error message */}
+          {message && (
+            <p className={`ph-message ${messageType}`}>
+              {message}
+            </p>
+          )}
         </form>
 
         <p className="ph-footer-text">
