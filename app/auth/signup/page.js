@@ -10,15 +10,38 @@ export default function SignupPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!name || !email || !password) {
-      alert("All fields are required.");
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  if (!name || !email || !password) {
+    alert("All fields are required.");
+    return;
+  }
+
+  try {
+    const res = await fetch("/api/auth/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, password }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert(data.message || "Signup failed. Please try again.");
       return;
     }
+
+    // Optionally save JWT token in localStorage
+    localStorage.setItem("token", data.token);
+
     alert("Account created successfully!");
-    router.push("/auth/login");
-  };
+    router.push("/auth/login"); // or you can push directly to dashboard if you want auto-login
+  } catch (err) {
+    console.error(err);
+    alert("Something went wrong. Please try again later.");
+  }
+};
 
   return (
     <div className="signup-page-wrapper">

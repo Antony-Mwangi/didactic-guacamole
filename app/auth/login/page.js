@@ -9,15 +9,41 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!email || !password) {
-      alert("Please fill all the fields.");
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  if (!email || !password) {
+    alert("Please fill all the fields.");
+    return;
+  }
+
+  try {
+    const res = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, password }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert(data.message || "Login failed");
       return;
     }
+
+    // Save token + user
+    localStorage.setItem("ph_token", data.token);
+    localStorage.setItem("ph_user", JSON.stringify(data.user));
+
     alert("Login successful!");
-    router.push("/learn");
-  };
+    router.push("/dashboard");
+
+  } catch (error) {
+    alert("Something went wrong. Try again.");
+  }
+};
 
   return (
     <div className="ph-auth-container">
