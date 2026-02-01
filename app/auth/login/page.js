@@ -8,8 +8,8 @@ export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [message, setMessage] = useState(""); // For success/error messages
-  const [messageType, setMessageType] = useState("success"); // "success" or "error"
+  const [message, setMessage] = useState(""); 
+  const [messageType, setMessageType] = useState("success"); 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -37,15 +37,15 @@ export default function LoginPage() {
         return;
       }
 
-      // Save token + user
+      
       localStorage.setItem("ph_token", data.token);
       localStorage.setItem("ph_user", JSON.stringify(data.user));
 
-      // Show success message
+      
       setMessageType("success");
       setMessage("Welcome back! Redirecting to your dashboard...");
 
-      // Redirect after short delay
+      
       setTimeout(() => {
         router.push("/dashboard");
       }, 1200);
@@ -254,7 +254,7 @@ export default function LoginPage() {
             Login
           </button>
 
-          {/* Display success or error message */}
+          
           {message && (
             <p className={`ph-message ${messageType}`}>
               {message}

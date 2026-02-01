@@ -10,38 +10,52 @@ export default function SignupPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const [message, setMessage] = useState(""); 
+  const [messageType, setMessageType] = useState("success"); 
+
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (!name || !email || !password) {
-    alert("All fields are required.");
-    return;
-  }
-
-  try {
-    const res = await fetch("/api/auth/signup", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, password }),
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      alert(data.message || "Signup failed. Please try again.");
+    if (!name || !email || !password) {
+      setMessageType("error");
+      setMessage("All fields are required.");
       return;
     }
 
-    // Optionally save JWT token in localStorage
-    localStorage.setItem("token", data.token);
+    try {
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password }),
+      });
 
-    alert("Account created successfully!");
-    router.push("/auth/login"); // or you can push directly to dashboard if you want auto-login
-  } catch (err) {
-    console.error(err);
-    alert("Something went wrong. Please try again later.");
-  }
-};
+      const data = await res.json();
+
+      if (!res.ok) {
+        setMessageType("error");
+        setMessage(data.message || "Signup failed. Please try again.");
+        return;
+      }
+
+      
+      localStorage.setItem("ph_token", data.token);
+      localStorage.setItem("ph_user", JSON.stringify(data.user));
+
+      
+      setMessageType("success");
+      setMessage("Account created successfully! Redirecting to login...");
+
+      
+      setTimeout(() => {
+        router.push("/auth/login");
+      }, 1500);
+
+    } catch (err) {
+      console.error(err);
+      setMessageType("error");
+      setMessage("Something went wrong. Please try again later.");
+    }
+  };
 
   return (
     <div className="signup-page-wrapper">
@@ -57,7 +71,7 @@ export default function SignupPage() {
           background-image: 
             radial-gradient(at 0% 0%, rgba(34, 197, 94, 0.15) 0, transparent 50%), 
             radial-gradient(at 100% 100%, rgba(59, 130, 246, 0.15) 0, transparent 50%);
-          padding: 20px; /* Essential for mobile breathing room */
+          padding: 20px;
           box-sizing: border-box;
           font-family: 'Inter', system-ui, -apple-system, sans-serif;
         }
@@ -169,7 +183,16 @@ export default function SignupPage() {
           text-decoration: underline;
         }
 
-        /* 5. Responsive Adjustments */
+        /* 5. Success/Error message */
+        .signup-message {
+          text-align: center;
+          margin-top: 16px;
+          font-weight: 600;
+        }
+        .signup-message.success { color: #22c55e; }
+        .signup-message.error { color: #f87171; }
+
+        /* 6. Responsive Adjustments */
         @media (max-width: 480px) {
           .signup-card {
             padding: 30px 20px;
@@ -222,6 +245,13 @@ export default function SignupPage() {
           <button type="submit" className="signup-btn">
             Sign Up
           </button>
+
+          
+          {message && (
+            <p className={`signup-message ${messageType}`}>
+              {message}
+            </p>
+          )}
         </form>
 
         <p className="login-prompt">
