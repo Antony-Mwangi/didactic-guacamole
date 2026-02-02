@@ -358,7 +358,7 @@ export default function MarketAnalysisPage() {
             Management, and Market Analysis. Start applying these skills in
             your trading journey.
           </p>
-          <Link href="/" className="ph-home-btn">Go Back Home →</Link>
+          <Link href="/dashboard" className="ph-home-btn">Go Back Dashboard →</Link>
         </section>
       </div>
     </div>

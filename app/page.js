@@ -216,7 +216,7 @@ export default function Home() {
         <div className="ph-grid">
           {testimonials.map((item, index) => (
             <div key={index} className="ph-testimonial-card">
-              <p style={{ color: '#94a3b8', marginBottom: '20px' }}>"{item.message}"</p>
+              <p style={{ color: '#94a3b8', marginBottom: '20px' }}>&quot;{item.message}</p>
               <h4 style={{ color: '#22c55e' }}>{item.name}</h4>
             </div>
           ))}
