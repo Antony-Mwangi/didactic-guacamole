@@ -1,4 +1,6 @@
 "use client";
+import Link from "next/link";
+
 
 export default function Home() {
   const testimonials = [
@@ -172,7 +174,8 @@ export default function Home() {
           Unlock the secrets of the Forex market. Learn institutional strategies 
           used by the pros to trade with confidence.
         </p>
-        <button className="ph-btn-glow">Start Your Journey</button>
+
+      <Link href="/auth/login" className="ph-btn-glow"> Start Your Journey</Link>
       </section>
 
       

@@ -113,6 +113,7 @@ export default function Header() {
           <Link href="/features" className="ph-nav-link">Features</Link>
           <Link href="/about" className="ph-nav-link">About</Link>
           <Link href="/auth/login" className="ph-nav-link">Login</Link>
+          {/* <Link href="/dashboard" className="ph-nav-link">Dashboard</Link> */}
         </nav>
       </header>
     </>
