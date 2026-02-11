@@ -2,34 +2,35 @@
 FROM node:20-alpine AS builder
 WORKDIR /app
 
-# Install dependencies first for better caching
+# Install dependencies
 COPY package*.json ./
 RUN npm ci
 
-# Copy all source files
+# Copy source code
 COPY . .
 
-# --- NEW: Handle the MONGODB_URI for the Build Process ---
-# This accepts the variable from the --build-arg flag in Jenkins
+# Build Arguments (passed from Jenkins)
 ARG MONGODB_URI
-# This makes it available as a system environment variable during "npm run build"
 ENV MONGODB_URI=$MONGODB_URI
 
 RUN npm run build
 
-# --- Stage 2: Production Runner ---
+# --- Stage 2: Runner ---
 FROM node:20-alpine AS runner
 WORKDIR /app
 
-# Ensure we are in production mode
 ENV NODE_ENV=production
 
-# Copy the standalone output and static assets
+# Re-declare ARG in the second stage to make it available at runtime
+ARG MONGODB_URI
+ENV MONGODB_URI=$MONGODB_URI
+
+# Copy standalone build files
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 
 EXPOSE 3000
 
-# Start the optimized server
+# Next.js standalone server
 CMD ["node", "server.js"]
