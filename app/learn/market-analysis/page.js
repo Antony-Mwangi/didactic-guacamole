@@ -389,12 +389,21 @@ export default function MarketAnalysisPage() {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=JetBrains+Mono:wght@400;700&display=swap');
 
+        :root {
+          --bg-main: #030406;
+          --bg-card: #0a0c10;
+          --accent: #22c55e;
+          --border: #1e293b;
+          --text-muted: #94a3b8;
+        }
+
         .ph-market-container {
-          background-color: #030406;
+          background-color: var(--bg-main);
           color: #fafafa;
           font-family: 'Space Grotesk', sans-serif;
           line-height: 1.6;
-          padding: 80px 5%;
+          padding: clamp(40px, 8vw, 80px) 5%;
+          min-height: 100vh;
         }
 
         .mono { font-family: 'JetBrains Mono', monospace; }
@@ -402,60 +411,62 @@ export default function MarketAnalysisPage() {
         .ph-market-header {
           text-align: left;
           max-width: 1100px;
-          margin: 0 auto 80px;
-          position: relative;
+          margin: 0 auto clamp(40px, 10vw, 80px);
         }
 
         .ph-market-header h1 {
-          font-size: clamp(2.5rem, 6vw, 4.5rem);
-          line-height: 1;
+          font-size: clamp(2rem, 8vw, 4.5rem);
+          line-height: 1.1;
           color: #fff;
           margin-bottom: 24px;
           font-weight: 700;
-          letter-spacing: -3px;
+          letter-spacing: -0.05em;
         }
 
-        .accent-text { color: #22c55e; }
+        .accent-text { color: var(--accent); }
 
         .ph-market-header p {
-          color: #94a3b8;
-          font-size: 1.35rem;
+          color: var(--text-muted);
+          font-size: clamp(1rem, 2.5vw, 1.35rem);
           max-width: 700px;
-          line-height: 1.4;
+          line-height: 1.5;
         }
 
         .ph-content-grid {
           display: grid;
           grid-template-columns: repeat(12, 1fr);
-          gap: 40px;
+          gap: clamp(20px, 4vw, 40px);
           max-width: 1200px;
           margin: 0 auto;
         }
 
         .ph-market-section {
           grid-column: span 12;
-          background: #0a0c10;
-          border-radius: 4px;
-          padding: 60px;
-          border-left: 2px solid #1e293b;
+          background: var(--bg-card);
+          border-radius: 8px;
+          padding: clamp(25px, 5vw, 60px);
+          border-left: 3px solid var(--border);
           transition: all 0.3s ease;
+          width: 100%;
         }
 
+        /* Desktop specific: side-by-side cards */
         @media (min-width: 1024px) {
             .ph-market-section.half { grid-column: span 6; }
         }
 
         .ph-market-section:hover {
-          border-left-color: #22c55e;
+          border-left-color: var(--accent);
           background: #0d1117;
+          transform: translateY(-2px);
         }
 
         .ph-market-section h2 {
-          font-size: 1.2rem;
-          color: #22c55e;
+          font-size: clamp(0.9rem, 2vw, 1.2rem);
+          color: var(--accent);
           text-transform: uppercase;
-          letter-spacing: 4px;
-          margin-bottom: 40px;
+          letter-spacing: 0.2em;
+          margin-bottom: clamp(20px, 4vw, 40px);
           display: flex;
           align-items: center;
           gap: 15px;
@@ -463,73 +474,106 @@ export default function MarketAnalysisPage() {
         }
 
         .concept-title {
-            font-size: 1.8rem;
+            font-size: clamp(1.4rem, 4vw, 1.8rem);
             font-weight: 700;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             display: block;
             color: #fff;
+            line-height: 1.2;
         }
 
         .explanation-text {
-            color: #94a3b8;
-            font-size: 1.1rem;
-            margin-bottom: 30px;
+            color: var(--text-muted);
+            font-size: clamp(0.95rem, 2vw, 1.1rem);
+            margin-bottom: 25px;
         }
 
         .ph-chart-image {
-          margin: 30px 0;
-          background: #030406;
-          padding: 10px;
-          border: 1px solid #1e293b;
+          margin: 25px 0;
+          background: #000;
+          padding: 8px;
+          border: 1px solid var(--border);
+          border-radius: 4px;
         }
 
         .data-list {
           display: grid;
-          gap: 20px;
-          margin-top: 40px;
+          grid-template-columns: 1fr;
+          gap: 15px;
+          margin-top: 30px;
+        }
+
+        /* Responsive grid for data items inside the strategy section */
+        @media (min-width: 768px) {
+            .strategy-grid { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
         }
 
         .data-item {
           display: flex;
           flex-direction: column;
-          gap: 5px;
+          gap: 8px;
           padding: 20px;
-          background: #030406;
-          border: 1px solid #1e293b;
+          background: var(--bg-main);
+          border: 1px solid var(--border);
+          border-radius: 4px;
         }
 
-        .data-label { color: #22c55e; font-weight: 700; font-size: 0.9rem; text-transform: uppercase; }
-        .data-value { color: #e2e8f0; font-size: 1rem; }
+        .data-label { color: var(--accent); font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
+        .data-value { color: #e2e8f0; font-size: 0.95rem; line-height: 1.5; }
+
+        .ph-yt-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+          gap: 15px;
+        }
 
         .ph-yt-box {
-          flex: 1;
-          min-width: 250px;
           background: transparent;
-          border: 1px solid #1e293b;
+          border: 1px solid var(--border);
           color: white;
-          padding: 25px;
+          padding: 20px 25px;
           text-decoration: none;
           display: flex;
           align-items: center;
           justify-content: space-between;
           transition: 0.2s;
+          font-size: 0.9rem;
         }
 
         .ph-yt-box:hover {
           background: #ff0000;
           border-color: #ff0000;
+          color: #fff;
         }
 
         .ph-home-btn {
-          background: #22c55e;
+          background: var(--accent);
           color: #000;
-          padding: 25px 60px;
+          padding: clamp(15px, 3vw, 25px) clamp(30px, 6vw, 60px);
           font-weight: 700;
           text-decoration: none;
           display: inline-flex;
           align-items: center;
           gap: 15px;
           letter-spacing: 1px;
+          width: 100%;
+          justify-content: center;
+          font-size: clamp(0.9rem, 2vw, 1.1rem);
+        }
+
+        @media (min-width: 640px) {
+            .ph-home-btn { width: auto; }
+        }
+
+        .yt-header {
+           display: flex;
+           flex-direction: column;
+           gap: 10px;
+           margin-bottom: 30px;
+        }
+
+        @media (min-width: 640px) {
+           .yt-header { flex-direction: row; align-items: center; }
         }
       `}</style>
 
@@ -538,7 +582,7 @@ export default function MarketAnalysisPage() {
         <h1>Decoding <span className="accent-text">Orderflow</span> & Structure.</h1>
         <p>
           Markets are not random. They are an auction process driven by liquidity. 
-          Mastering these mechanics allows you to trade with the "Smart Money" rather than against it.
+          Mastering these mechanics allows you to trade with the "Smart Money."
         </p>
       </header>
 
@@ -550,13 +594,20 @@ export default function MarketAnalysisPage() {
           <span className="concept-title">The Flow of Liquidity</span>
           <p className="explanation-text">
             Market structure is the most fundamental tool in a trader's arsenal. It tells you which direction 
-            the "Big Boys" are pushing price. A break of structure (BOS) signals a shift in sentiment 
-            long before indicators like the RSI or MACD will react.
+            the "Big Boys" are pushing price.
           </p>
           
           <div className="ph-chart-image">
-            <Image src="/trend-up-down.PNG" alt="Trend example" width={1100} height={500} style={{ width: "100%", height: "auto" }} />
+            <Image 
+                src="/trend-up-down.PNG" 
+                alt="Market Structure: Uptrend vs Downtrend" 
+                width={1100} 
+                height={500} 
+                layout="responsive"
+                priority
+            />
           </div>
+          
 
           <div className="data-list">
             <div className="data-item">
@@ -576,13 +627,14 @@ export default function MarketAnalysisPage() {
           <span className="concept-title">Institutional Footprints</span>
           <p className="explanation-text">
             Forget "lines"—markets react to **Zones**. Supply zones are areas where large institutions 
-            placed sell orders, leaving behind "Unfilled Orders." When price returns to these zones, 
-            those orders are triggered, causing a sharp drop.
+            placed sell orders, leaving behind "Unfilled Orders."
           </p>
           <div className="ph-chart-image">
-            <Image src="/support-resistance.PNG" alt="Support resistance" width={900} height={450} style={{ width: "100%", height: "auto" }} />
+            <Image src="/support-resistance.PNG" alt="Supply and Demand Zones" width={900} height={450} layout="responsive" />
           </div>
-          <div className="mono accent-text text-sm">// LOOK FOR AGGRESSIVE DEPARTURES FROM ZONES</div>
+          <div className="mono accent-text text-xs sm:text-sm tracking-tighter sm:tracking-normal">
+            // LOOK FOR AGGRESSIVE DEPARTURES FROM ZONES
+          </div>
         </section>
 
         {/* Candlesticks */}
@@ -590,24 +642,26 @@ export default function MarketAnalysisPage() {
           <h2><FiActivity /> 03. Candlestick Logic</h2>
           <span className="concept-title">Sentiment Verification</span>
           <p className="explanation-text">
-            A candlestick isn't just a price point; it's a battle map. Long wicks (rejections) signify 
-            that one side of the market was "trapped," leading to a fast move in the opposite direction.
+            A candlestick isn't just a price point; it's a battle map. Long wicks signify 
+            rejections and liquidity sweeps.
           </p>
           <div className="ph-chart-image">
-            <Image src="/candlesticks.PNG" alt="Candlestick patterns" width={900} height={450} style={{ width: "100%", height: "auto" }} />
+            <Image src="/candlesticks.PNG" alt="Candlestick Psychology" width={900} height={450} layout="responsive" />
           </div>
-          <div className="mono accent-text text-sm">// BODY CLOSURE IS THE ONLY REAL CONFIRMATION</div>
+          <div className="mono accent-text text-xs sm:text-sm tracking-tighter sm:tracking-normal">
+            // BODY CLOSURE IS THE ONLY REAL CONFIRMATION
+          </div>
         </section>
 
         {/* Strategy Section */}
         <section className="ph-market-section">
             <h2><FiZap /> 04. Execution Edge</h2>
-            <span className="concept-title">The Multi-Timeframe Confluence</span>
+            <span className="concept-title">Multi-Timeframe Confluence</span>
             <p className="explanation-text">
-                Successful trading requires a "Top-Down" approach. You cannot trade the 5-minute chart in isolation.
+                Successful trading requires a "Top-Down" approach.
             </p>
             
-            <div className="data-list" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
+            <div className="data-list strategy-grid">
                 <div className="data-item">
                     <span className="data-label mono">Higher Timeframe (HTF)</span>
                     <span className="data-value">Use Daily/4H to find the "Narrative." Is the trend bullish or bearish?</span>
@@ -618,29 +672,29 @@ export default function MarketAnalysisPage() {
                 </div>
                 <div className="data-item">
                     <span className="data-label mono">Risk Management</span>
-                    <span className="data-value">Never risk more than 1-2% of your capital on a single "Setup," regardless of how good it looks.</span>
+                    <span className="data-value">Never risk more than 1-2% of your capital on a single setup.</span>
                 </div>
             </div>
         </section>
 
         {/* YouTube */}
-        <section className="ph-yt-resources">
-          <div className="flex items-center gap-4 mb-8">
+        <section className="ph-market-section">
+          <div className="yt-header">
             <FiYoutube size={24} color="#ff0000" />
-            <h2 className="text-xl font-bold mono uppercase tracking-widest">Training_Modules</h2>
+            <h2 style={{margin:0}}>Training_Modules</h2>
           </div>
           <div className="ph-yt-grid">
-            <a className="ph-yt-box mono" href="#" target="_blank">01_CHART_READING_BASICS <FiArrowRight /></a>
-            <a className="ph-yt-box mono" href="#" target="_blank">02_ADVANCED_ORDERBLOCKS <FiArrowRight /></a>
+            <a className="ph-yt-box mono" href="#" target="_blank">01_CHART_BASICS <FiArrowRight /></a>
+            <a className="ph-yt-box mono" href="#" target="_blank">02_ORDERBLOCKS <FiArrowRight /></a>
             <a className="ph-yt-box mono" href="#" target="_blank">03_RISK_MODELS <FiArrowRight /></a>
           </div>
         </section>
 
         {/* Completion */}
-        <section className="ph-market-section" style={{ textAlign: 'center', border: '1px solid #22c55e' }}>
+        <section className="ph-market-section" style={{ textAlign: 'center', border: '1px solid var(--accent)' }}>
           <FiTarget size={48} className="accent-text mb-6" style={{ margin: '0 auto' }} />
           <span className="concept-title">System Loaded.</span>
-          <p className="explanation-text">You have completed the theoretical foundation. The next step is live-market observation.</p>
+          <p className="explanation-text">Theoretical foundation complete. Proceed to live execution.</p>
           <Link href="/dashboard" className="ph-home-btn mono">
             OPEN_TERMINAL_PRO
           </Link>
